@@ -6,7 +6,9 @@ import 'wishlist_page.dart';
 import 'cart.dart'; // Import kelas keranjang
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final Cart cart; // Tambahkan cart sebagai parameter untuk diteruskan
+
+  const HomePage({Key? key, required this.cart}) : super(key: key);  // Pastikan cart dikirim ke homepage
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -14,7 +16,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String selectedCategory = 'All'; // Filter untuk kategori
-  final Cart _cart = Cart(); // Inisialisasi keranjang
   final List<Product> _wishlist = []; // Inisialisasi wishlist
 
   // Dummy data produk dengan gambar dari assets
@@ -118,7 +119,7 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CartPage(cart: _cart), // Kirim data keranjang ke CartPage
+                  builder: (context) => CartPage(cart: widget.cart), // Kirim data keranjang ke CartPage
                 ),
               );
             },
@@ -153,7 +154,10 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProductDetail(product: product),
+                    builder: (context) => ProductDetail(
+                      product: product,      // Kirimkan produk
+                      cart: widget.cart,     // Kirimkan instance Cart ke ProductDetail
+                    ),
                   ),
                 );
               },
@@ -182,7 +186,10 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductDetail(product: product), // Arahkan ke halaman detail untuk proses beli
+                            builder: (context) => ProductDetail(
+                              product: product,   // Kirimkan produk
+                              cart: widget.cart,  // Kirimkan instance Cart ke ProductDetail
+                            ),
                           ),
                         );
                       },
@@ -206,7 +213,7 @@ class _HomePageState extends State<HomePage> {
                           icon: const Icon(Icons.shopping_cart, color: Colors.blue),
                           onPressed: () {
                             setState(() {
-                              _cart.addToCart(product); // Tambahkan produk ke keranjang jika tombol cart ditekan
+                              widget.cart.addToCart(product); // Tambahkan produk ke keranjang jika tombol cart ditekan
                             });
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('${product.title} telah ditambahkan ke keranjang')),
@@ -228,7 +235,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             const DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.green,
+                color: Colors.blueGrey,
               ),
               child: Text(
                 'Pilih Kategori',

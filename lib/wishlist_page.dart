@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'models/product.dart';
 
 class WishlistPage extends StatelessWidget {
   final List<Product> wishlist;
 
   const WishlistPage({Key? key, required this.wishlist}) : super(key: key);
-=======
-
-class WishlistPage extends StatelessWidget {
-  const WishlistPage({Key? key}) : super(key: key);
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
 
   @override
   Widget build(BuildContext context) {
@@ -18,12 +12,8 @@ class WishlistPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Wishlist'),
       ),
-<<<<<<< HEAD
       body: wishlist.isEmpty
           ? Center(
-=======
-      body: Center(
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
@@ -31,7 +21,6 @@ class WishlistPage extends StatelessWidget {
             Text('Belum Ada Produk di Wishlist', style: TextStyle(fontSize: 20)),
           ],
         ),
-<<<<<<< HEAD
       )
           : ListView.builder(
         itemCount: wishlist.length,
@@ -49,8 +38,6 @@ class WishlistPage extends StatelessWidget {
             ),
           );
         },
-=======
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
       ),
     );
   }

@@ -1,120 +1,113 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'order_review_page.dart';
-=======
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
 import 'models/product.dart';
+import 'cart.dart'; // Tambahkan import Cart
 
 class ProductDetail extends StatelessWidget {
   final Product product;
+  final Cart cart; // Tambahkan cart sebagai parameter
 
-  const ProductDetail({Key? key, required this.product}) : super(key: key);
+  const ProductDetail({Key? key, required this.product, required this.cart}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-<<<<<<< HEAD
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
-=======
-    int count = 1;
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-<<<<<<< HEAD
-=======
-        title: const Text('Detail', style: TextStyle(color: Colors.black)),
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
         actions: [
           IconButton(
             icon: const Icon(Icons.favorite_border, color: Colors.black),
             onPressed: () {
-<<<<<<< HEAD
-              // Add to wishlist logic
-=======
               // Logika untuk menambahkan ke wishlist
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
             },
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 8.0),
-          Text(
-            product.title,
-            style: const TextStyle(fontSize: 30, fontWeight: FontWeight.w700),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.white, Colors.blueGrey],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
-          const SizedBox(height: 10),
-          Center(
-<<<<<<< HEAD
-            child: Image.asset(product.imageUrl, height: 200),
-=======
-            child: Image.network(product.imageUrl, height: 200),
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
-          ),
-          Container(
-            color: Colors.grey[200],
-            padding: const EdgeInsets.only(left: 20, top: 20),
-            child: Row(
-              children: [
-                Text(
-                  'Rp ${product.price}',
-                  style: const TextStyle(color: Colors.green, fontSize: 30, fontWeight: FontWeight.w700),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 16.0),
+            Center(
+              child: Hero(
+                tag: product.title,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.asset(product.imageUrl, height: 180, fit: BoxFit.cover),
                 ),
-                const Text(
-                  ' / per item',
-                  style: TextStyle(color: Colors.green, fontSize: 20, fontWeight: FontWeight.w400),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              child: Text(
-                product.description,
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-                textAlign: TextAlign.justify,
               ),
             ),
-          ),
-          Container(
-            height: 100,
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            color: Colors.grey,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-<<<<<<< HEAD
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OrderReviewPage(product: product, quantity: 1),
-                      ),
-                    );
-=======
-                    // Logika menambah ke keranjang
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
-                  },
-                  child: const Text('Pesan', style: TextStyle(fontSize: 20)),
-                ),
-              ],
+            const SizedBox(height: 20),
+            Text(
+              product.title,
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              'Rp ${product.price}',
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: Colors.green,
+              ),
+            ),
+            const Spacer(),
+            // Tombol Beli dengan Desain Modern
+            _buildPurchaseButton(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPurchaseButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          padding: const EdgeInsets.all(15),
+          backgroundColor: Colors.green, // Ganti dengan warna tombol yang diinginkan
+        ),
+        onPressed: () {
+          // Navigasi ke OrderReviewPage TANPA menambahkan produk ke keranjang
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => OrderReviewPage(
+                products: [product],  // Produk dikirim sebagai list
+                quantities: [1],      // Kuantitas dalam bentuk list
+                cart: cart,           // Kirimkan instance Cart ke OrderReviewPage
+                shouldClearCart: false, // Jangan bersihkan keranjang setelah pembayaran
+                isDirectPurchase: true, // Tampilkan sebagai pembelian langsung, tanpa masuk ke keranjang
+              ),
+            ),
+          );
+        },
+        child: const Text(
+          'Beli Sekarang',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

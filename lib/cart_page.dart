@@ -1,17 +1,12 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
+import 'order_review_page.dart';
+import 'cart.dart'; // Pastikan file Cart diimport
 import 'models/product.dart';
-import 'cart.dart'; // Import class Cart yang sudah kita buat
 
 class CartPage extends StatelessWidget {
   final Cart cart;
 
   const CartPage({Key? key, required this.cart}) : super(key: key);
-=======
-
-class CartPage extends StatelessWidget {
-  const CartPage({Key? key}) : super(key: key);
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +14,8 @@ class CartPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Keranjang Belanja'),
       ),
-<<<<<<< HEAD
       body: cart.items.isEmpty
           ? Center(
-=======
-      body: Center(
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
@@ -32,7 +23,6 @@ class CartPage extends StatelessWidget {
             Text('Keranjang Belanja Anda Kosong', style: TextStyle(fontSize: 20)),
           ],
         ),
-<<<<<<< HEAD
       )
           : ListView.builder(
         itemCount: cart.items.length,
@@ -74,36 +64,25 @@ class CartPage extends StatelessWidget {
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () {
-                // Logika checkout bisa ditambahkan di sini
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text("Checkout Berhasil"),
-                      content: const Text("Terima kasih sudah berbelanja!"),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            cart.clearCart(); // Bersihkan keranjang setelah checkout
-                            Navigator.of(context).pop(); // Kembali ke halaman sebelumnya
-                          },
-                          child: const Text("OK"),
-                        ),
-                      ],
-                    );
-                  },
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OrderReviewPage(
+                      products: cart.items,  // Mengirimkan item keranjang ke OrderReviewPage
+                      quantities: cart.items.map((e) => e.quantity).toList(), // Kuantitas untuk setiap item
+                      cart: cart,            // Mengirimkan instance Cart
+                      shouldClearCart: true, // Karena ini melalui keranjang, bersihkan setelah pembayaran
+                      isDirectPurchase: false, // Bukan pembelian langsung
+                    ),
+                  ),
                 );
               },
-              child: const Text('Checkout', style: TextStyle(fontSize: 20)),
+              child: const Text('Checkout'),
             ),
           ],
         ),
       )
           : null,
-=======
-      ),
->>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
     );
   }
 }

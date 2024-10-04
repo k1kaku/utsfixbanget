@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
+import 'cart.dart'; // Pastikan Cart diimpor untuk mengakses keranjang
+import 'home_page.dart'; // Pastikan HomePage diimpor sebagai halaman utama
 
 class PaymentSuccessPage extends StatelessWidget {
-  const PaymentSuccessPage({Key? key}) : super(key: key);
+  final Cart cart;
+  final bool shouldClearCart; // Parameter untuk membersihkan keranjang
+  final bool isDirectPurchase; // Tambahkan parameter untuk mengetahui pembelian langsung
+
+  const PaymentSuccessPage({
+    Key? key,
+    required this.cart,
+    required this.shouldClearCart,
+    required this.isDirectPurchase,  // Tambahkan parameter untuk pembelian langsung
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +33,19 @@ class PaymentSuccessPage extends StatelessWidget {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context); // Kembali ke halaman beranda atau sebelumnya
+                // Jika pembelian melalui keranjang dan `shouldClearCart` bernilai true, bersihkan keranjang
+                if (shouldClearCart && !isDirectPurchase) {
+                  cart.clearCart();
+                }
+
+                // Navigasi kembali ke halaman utama
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HomePage(cart: cart), // Kirim data cart ke homepage
+                  ),
+                      (Route<dynamic> route) => false, // Menghapus semua halaman sebelumnya
+                );
               },
               child: const Text('Lanjutkan Belanja'),
             ),

@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'cart_page.dart'; // Halaman Keranjang Belanja
-import 'wishlist_page.dart'; // Halaman Wishlist
-import 'home_page.dart'; // Halaman Utama
+import 'home_page.dart';
+import 'cart.dart'; // Misalnya, Cart diimport di sini
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final Cart cart = Cart(); // Inisialisasi cart
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Merch Kpop',
+      title: 'Kpop Store',
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const HomePage(),
+      debugShowCheckedModeBanner: false, // Menyembunyikan banner "debug"
+      home: HomePage(cart: cart), // Kirim cart ke HomePage
     );
   }
 }
