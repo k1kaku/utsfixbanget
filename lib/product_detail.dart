@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'order_review_page.dart';
+=======
+>>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
 import 'models/product.dart';
 
 class ProductDetail extends StatelessWidget {
@@ -9,21 +12,37 @@ class ProductDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     return Scaffold(
       appBar: AppBar(
         title: const Text('Detail', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
+=======
+    int count = 1;
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 1,
+>>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+<<<<<<< HEAD
+=======
+        title: const Text('Detail', style: TextStyle(color: Colors.black)),
+>>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
         actions: [
           IconButton(
             icon: const Icon(Icons.favorite_border, color: Colors.black),
             onPressed: () {
+<<<<<<< HEAD
               // Add to wishlist logic
+=======
+              // Logika untuk menambahkan ke wishlist
+>>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
             },
           ),
         ],
@@ -38,7 +57,11 @@ class ProductDetail extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Center(
+<<<<<<< HEAD
             child: Image.asset(product.imageUrl, height: 200),
+=======
+            child: Image.network(product.imageUrl, height: 200),
+>>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
           ),
           Container(
             color: Colors.grey[200],
@@ -75,12 +98,16 @@ class ProductDetail extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
+<<<<<<< HEAD
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => OrderReviewPage(product: product, quantity: 1),
                       ),
                     );
+=======
+                    // Logika menambah ke keranjang
+>>>>>>> 9c964edd192e8a23aa1a4fa6aa13e9a663fc7900
                   },
                   child: const Text('Pesan', style: TextStyle(fontSize: 20)),
                 ),
