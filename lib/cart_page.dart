@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'models/product.dart';
+import 'cart.dart'; // Import class Cart yang sudah kita buat
 
 class CartPage extends StatelessWidget {
-  const CartPage({Key? key}) : super(key: key);
+  final Cart cart;
+
+  const CartPage({Key? key, required this.cart}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +13,8 @@ class CartPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Keranjang Belanja'),
       ),
-      body: Center(
+      body: cart.items.isEmpty
+          ? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: const [
@@ -17,7 +22,74 @@ class CartPage extends StatelessWidget {
             Text('Keranjang Belanja Anda Kosong', style: TextStyle(fontSize: 20)),
           ],
         ),
+      )
+          : ListView.builder(
+        itemCount: cart.items.length,
+        itemBuilder: (context, index) {
+          final product = cart.items[index];
+          return ListTile(
+            leading: Image.asset(product.imageUrl, width: 50, height: 50),
+            title: Text(product.title),
+            subtitle: Text('Jumlah: ${product.quantity}'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Rp ${product.price * product.quantity}'),
+                IconButton(
+                  icon: const Icon(Icons.remove_circle_outline),
+                  onPressed: () {
+                    // Menghapus produk dari keranjang
+                    cart.removeFromCart(product);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${product.title} telah dihapus dari keranjang')),
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
       ),
+      bottomNavigationBar: cart.items.isNotEmpty
+          ? Container(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Total Harga: Rp ${cart.totalPrice}',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                // Logika checkout bisa ditambahkan di sini
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      title: const Text("Checkout Berhasil"),
+                      content: const Text("Terima kasih sudah berbelanja!"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            cart.clearCart(); // Bersihkan keranjang setelah checkout
+                            Navigator.of(context).pop(); // Kembali ke halaman sebelumnya
+                          },
+                          child: const Text("OK"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+              child: const Text('Checkout', style: TextStyle(fontSize: 20)),
+            ),
+          ],
+        ),
+      )
+          : null,
     );
   }
 }

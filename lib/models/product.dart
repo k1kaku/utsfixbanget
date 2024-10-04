@@ -3,7 +3,8 @@ class Product {
   final int price;
   final String imageUrl;
   final String description;
-  final String category; // Buah atau Sayur
+  final String category;
+  int quantity;
 
   Product({
     required this.title,
@@ -11,5 +12,6 @@ class Product {
     required this.imageUrl,
     required this.description,
     required this.category,
+    this.quantity = 1,  // Default quantity
   });
 }

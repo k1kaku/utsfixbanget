@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'order_review_page.dart';
 import 'models/product.dart';
 
 class ProductDetail extends StatelessWidget {
@@ -8,23 +9,21 @@ class ProductDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int count = 1;
     return Scaffold(
       appBar: AppBar(
+        title: const Text('Detail', style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
-        elevation: 1,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text('Detail', style: TextStyle(color: Colors.black)),
         actions: [
           IconButton(
             icon: const Icon(Icons.favorite_border, color: Colors.black),
             onPressed: () {
-              // Logika untuk menambahkan ke wishlist
+              // Add to wishlist logic
             },
           ),
         ],
@@ -39,7 +38,7 @@ class ProductDetail extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Center(
-            child: Image.network(product.imageUrl, height: 200),
+            child: Image.asset(product.imageUrl, height: 200),
           ),
           Container(
             color: Colors.grey[200],
@@ -76,7 +75,12 @@ class ProductDetail extends StatelessWidget {
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    // Logika menambah ke keranjang
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OrderReviewPage(product: product, quantity: 1),
+                      ),
+                    );
                   },
                   child: const Text('Pesan', style: TextStyle(fontSize: 20)),
                 ),
