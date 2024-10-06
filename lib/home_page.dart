@@ -1,9 +1,13 @@
+// lib/home_page.dart
 import 'package:flutter/material.dart';
+import 'database_helper.dart'; // Import DatabaseHelper dari lib/
 import 'cart_page.dart';
-import 'product_detail.dart';
-import 'models/product.dart';
+import 'product_detail.dart'; // Import ProductDetail untuk navigasi
+import 'models/product.dart'; // Import Product dari lib/models/
 import 'wishlist_page.dart';
-import 'cart.dart'; // Import kelas keranjang
+import 'cart.dart'; // Import Cart dari lib/
+import 'package:kelompok_uts/product_detail.dart';  // Pastikan untuk mengimpor ProductDetail
+
 
 class HomePage extends StatefulWidget {
   final Cart cart; // Tambahkan cart sebagai parameter untuk diteruskan
@@ -15,75 +19,57 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
   String selectedCategory = 'All'; // Filter untuk kategori
   List<Product> _wishlist = []; // Inisialisasi wishlist
+  List<Product> _allProducts = []; // Semua produk dari database
+  bool _isLoading = true; // Tambahkan indikator loading
 
-  // Dummy data produk dengan gambar dari assets
-  final List<Product> allProducts = [
-    Product(
-      title: 'SEVENTEEN Acrylic Keyring',
-      price: 2000,
-      imageUrl: 'assets/images.png',
-      description: 'Acrylic Keyring Follow tour SEVENTEEN.',
-      category: 'SEVENTEEN',
-    ),
-    Product(
-      title: 'S/S T-Shirt',
-      price: 4000,
-      imageUrl: 'assets/img_3.png',
-      description: '(Washing Black) Right here T-Shirt.',
-      category: 'SEVENTEEN',
-    ),
-    Product(
-      title: 'Mini Shoulder Bag',
-      price: 9500,
-      imageUrl: 'assets/img_4.png',
-      description: 'BONGBONGEE Mini Shoulder Bag.',
-      category: 'SEVENTEEN',
-    ),
-    Product(
-      title: 'SEOUL DIGITAL CODE',
-      price: 9500,
-      imageUrl: 'assets/img_6.png',
-      description: 'SEVENTEEN TOUR [FOLLOW] TO SEOUL DIGITAL CODE',
-      category: 'SEVENTEEN',
-    ),
-    Product(
-      title: 'NCT127 Album [WALK]',
-      price: 4500,
-      imageUrl: 'assets/img_7.png',
-      description: 'The 6th Album [WALK] (Poster Ver.)',
-      category: 'NCT',
-    ),
-    Product(
-      title: 'NCT127 Doyoung YOUTH',
-      price: 4500,
-      imageUrl: 'assets/img_8.png',
-      description: 'The 1st Album 청춘의 포말 (YOUTH) (새봄 Ver.)',
-      category: 'NCT',
-    ),
-    Product(
-      title: 'ATEEZ Album',
-      price: 5000,
-      imageUrl: 'assets/img_8.png',
-      description: 'The new album by ATEEZ.',
-      category: 'ATEEZ',
-    ),
-    Product(
-      title: 'RIIZE Debut Album',
-      price: 5500,
-      imageUrl: 'assets/img_8.png',
-      description: 'The debut album of RIIZE.',
-      category: 'RIIZE',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    fetchProducts(); // Ambil data produk saat halaman dimuat
+  }
+
+  // Fungsi untuk mengambil produk dari database
+  Future<void> fetchProducts() async {
+    try {
+      setState(() {
+        _isLoading = true; // Mulai loading
+      });
+
+      List<Product> products = await _databaseHelper.getProducts();
+      setState(() {
+        _allProducts = products;
+        _isLoading = false; // Selesai loading
+      });
+
+      // Debugging untuk memeriksa data produk
+      if (products.isEmpty) {
+        print("Tidak ada produk di database.");
+      } else {
+        for (var product in products) {
+          print("Produk: ${product.title}, Gambar: ${product.imageUrl}");
+        }
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false; // Selesai loading meskipun error
+      });
+      // Tampilkan pesan error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal mengambil data produk: $e')),
+      );
+    }
+  }
 
   // Filter produk berdasarkan kategori yang dipilih
   List<Product> get filteredProducts {
-    if (selectedCategory == '' || selectedCategory == 'All') {
-      return allProducts;
+    if (selectedCategory == 'All') {
+      return _allProducts;
     } else {
-      return allProducts.where((product) => product.category == selectedCategory).toList();
+      return _allProducts.where((product) => product.category == selectedCategory).toList();
     }
   }
 
@@ -106,12 +92,20 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Fungsi untuk menambahkan produk ke keranjang
+  void addToCart(Product product) async {
+    widget.cart.addToCart(product);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${product.title} telah ditambahkan ke keranjang')),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Toko Merchandise Kpop',
+          'VibeMerch',
           style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
@@ -149,7 +143,9 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Column(
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator()) // Tampilkan loading saat mengambil data
+          : Column(
         children: [
           // Kontainer untuk kategori
           Container(
@@ -195,7 +191,14 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: Padding(
+            child: filteredProducts.isEmpty
+                ? Center(
+              child: Text(
+                "Tidak ada produk yang sesuai.",
+                style: TextStyle(fontSize: 16, color: Colors.black54),
+              ),
+            )
+                : Padding(
               padding: const EdgeInsets.all(10.0),
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -212,12 +215,12 @@ class _HomePageState extends State<HomePage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ProductDetail(
+                          builder: (context) => ProductDetail(  // Memastikan menggunakan ProductDetailPage dengan parameter yang benar
                             product: product,
-                            cart: widget.cart,
+                            cart: widget.cart,  // Kirimkan cart ke ProductDetailPage
                           ),
                         ),
-                      );
+                      ).then((_) => fetchProducts()); // Refresh saat kembali // Refresh saat kembali
                     },
                     child: Card(
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -229,7 +232,13 @@ class _HomePageState extends State<HomePage> {
                           Expanded(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(20),
-                              child: Image.asset(product.imageUrl, fit: BoxFit.cover),
+                              child: Image.asset(
+                                product.imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(Icons.broken_image, size: 50);
+                                },
+                              ),
                             ),
                           ),
                           Padding(
@@ -262,44 +271,9 @@ class _HomePageState extends State<HomePage> {
                               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                             ),
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProductDetail(
-                                    product: product,
-                                    cart: widget.cart,
-                                  ),
-                                ),
-                              );
+                              addToCart(product);
                             },
                             child: const Text('Beli', style: TextStyle(color: Colors.white)),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              IconButton(
-                                icon: Icon(
-                                  _wishlist.contains(product) ? Icons.favorite : Icons.favorite_border,
-                                  color: _wishlist.contains(product)
-                                      ? Colors.red
-                                      : Colors.black,
-                                ),
-                                onPressed: () {
-                                  toggleWishlist(product);
-                                },
-                              ),
-                              IconButton(
-                                icon: const Icon(Icons.shopping_cart, color: Colors.black),
-                                onPressed: () {
-                                  setState(() {
-                                    widget.cart.addToCart(product);
-                                  });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('${product.title} telah ditambahkan ke keranjang')),
-                                  );
-                                },
-                              ),
-                            ],
                           ),
                         ],
                       ),
@@ -314,6 +288,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Dropdown untuk memilih kategori
   Widget _buildCategoryDropdown() {
     return DropdownButton<String>(
       value: selectedCategory,
@@ -335,7 +310,7 @@ class _HomePageState extends State<HomePage> {
             value,
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 20, // Ubah ukuran teks dropdown menjadi lebih besar
+              fontSize: 20,
               fontWeight: FontWeight.w500,
             ),
           ),

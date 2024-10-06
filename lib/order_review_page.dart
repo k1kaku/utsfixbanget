@@ -25,13 +25,13 @@ class OrderReviewPage extends StatefulWidget {
 
 class _OrderReviewPageState extends State<OrderReviewPage> {
   String _selectedPaymentMethod = 'Master Card';
-  String _shippingAddress = 'Taimoor Sikander, +923329121290, Muhallah Usman a bad, Chakwal, Punjab 48800, Pakistan';
+  String _shippingAddress = 'Grasya, Grogol, Jakarta, Indonesia';
 
   final List<String> _paymentMethods = ['Master Card', 'BCA', 'BNI', 'SPAY', 'OVO', 'MANDIRI'];
   final List<String> _addresses = [
-    'Taimoor Sikander, +923329121290, Muhallah Usman a bad, Chakwal, Punjab 48800, Pakistan',
-    '123 Main Street, Jakarta, Indonesia',
-    '456 Second Street, Bandung, Indonesia'
+    'Grasya B , Grogol, Jakarta, Indonesia',
+    'Andri Rizkika, Cengkareng, Jakarta, Indonesia',
+    'Hana Fathiyah, Buah Batu, Bandung, Indonesia'
   ];
 
   @override

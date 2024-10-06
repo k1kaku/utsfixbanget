@@ -1,104 +1,89 @@
+// lib/payment_success_page.dart
 import 'package:flutter/material.dart';
-import 'cart.dart';
-import 'home_page.dart'; // Pastikan HomePage diimpor dengan benar
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';  // Impor RatingBar
+import 'database_helper.dart';
+import 'models/product.dart';
 
-class PaymentSuccessPage extends StatelessWidget {
-  final Cart cart;
-  final bool shouldClearCart; // Parameter untuk menghapus keranjang setelah pembayaran
+class PaymentSuccessPage extends StatefulWidget {
+  final Product product;
 
-  const PaymentSuccessPage({Key? key, required this.cart, required this.shouldClearCart}) : super(key: key);
+  PaymentSuccessPage({required this.product});
+
+  @override
+  _PaymentSuccessPageState createState() => _PaymentSuccessPageState();
+}
+
+class _PaymentSuccessPageState extends State<PaymentSuccessPage> {
+  final TextEditingController _ratingController = TextEditingController();
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+
+  // Fungsi untuk menambah rating
+  void addRating(int productId, int rating) async {
+    await _databaseHelper.addRating(productId, rating);
+
+    // Memperbarui rating produk setelah diberi rating baru
+    setState(() {
+      widget.product.averageRating = double.parse(_ratingController.text);
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Rating berhasil diberikan!")));
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (shouldClearCart) {
-      cart.clearCart(); // Kosongkan keranjang jika flag shouldClearCart bernilai true
-    }
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        title: const Text('Pembayaran Berhasil', style: TextStyle(color: Colors.black)),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        title: Text('Pembayaran Berhasil!'),
       ),
-      body: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.all(16.0),
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.white, Colors.blueGrey],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+      body: Padding(
+        padding: EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Animasi ikon berhasil (centang hijau besar)
-            const Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 100,
+            Icon(Icons.check_circle, color: Colors.green, size: 80),
+            SizedBox(height: 16),
+            Text(
+              'Terima kasih telah berbelanja!',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-
-            // Pesan sukses
-            const Text(
-              'Pembayaran Berhasil!',
-              style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
+            SizedBox(height: 16),
+            Text(
+              'Sekarang Anda dapat memberikan rating untuk produk yang telah dibeli.',
               textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16),
             ),
-            const SizedBox(height: 20),
-
-            const Text(
-              'Terima kasih telah berbelanja.',
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.black54,
+            SizedBox(height: 20),
+            // Rating yang diberikan oleh pengguna menggunakan RatingBar
+            RatingBar(
+              initialRating: widget.product.averageRating,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: true,
+              itemCount: 5,
+              itemSize: 40.0,
+              ratingWidget: RatingWidget(
+                full: Icon(Icons.star, color: Colors.amber),
+                half: Icon(Icons.star_half, color: Colors.amber),
+                empty: Icon(Icons.star_border, color: Colors.amber),
               ),
-              textAlign: TextAlign.center,
+              onRatingUpdate: (rating) {
+                _ratingController.text = rating.toString();
+              },
             ),
-            const SizedBox(height: 40),
-
-            // Tombol untuk kembali ke beranda dan melanjutkan belanja
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  backgroundColor: Colors.blueGrey,
-                ),
-                onPressed: () {
-                  // Navigasi kembali ke halaman utama
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HomePage(cart: cart),
-                    ),
-                        (route) => false, // Menghapus semua halaman sebelumnya dari tumpukan
-                  );
-                },
-                child: const Text(
-                  'Lanjutkan Belanja',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                int rating = int.parse(_ratingController.text);
+                addRating(widget.product.id!, rating);
+              },
+              child: Text("Berikan Rating"),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                // Kembali ke halaman utama atau lanjut belanja
+                Navigator.pop(context);
+              },
+              child: Text("Kembali ke Beranda"),
             ),
           ],
         ),
