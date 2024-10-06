@@ -54,8 +54,15 @@ class _CartPageState extends State<CartPage> {
                   return Card(
                     margin: const EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
-                      leading: Image.asset(product.imageUrl, width: 50, height: 50),
-                      title: Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      leading: Image.asset(
+                        product.imageUrl,
+                        width: 100,  // Ukuran gambar diperbesar menjadi lebih besar
+                        height: 100, // Ukuran gambar diperbesar menjadi lebih besar
+                      ),
+                      title: Text(
+                        product.title,
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22), // Ukuran teks lebih besar
+                      ),
                       subtitle: Row(
                         children: [
                           // Tombol mengurangi kuantitas
@@ -67,7 +74,7 @@ class _CartPageState extends State<CartPage> {
                               });
                             },
                           ),
-                          Text('${product.quantity}'), // Tampilkan kuantitas
+                          Text('${product.quantity}', style: const TextStyle(fontSize: 16)), // Tampilkan kuantitas dengan ukuran lebih besar
                           // Tombol menambah kuantitas
                           IconButton(
                             icon: const Icon(Icons.add, color: Colors.black),
@@ -82,13 +89,16 @@ class _CartPageState extends State<CartPage> {
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Rp ${product.price * product.quantity}'),
+                          Text(
+                            'Rp ${product.price * product.quantity}',
+                            style: const TextStyle(fontSize: 18), // Ukuran teks harga lebih besar
+                          ),
                           // Tombol delete dengan ikon tempat sampah
                           IconButton(
                             icon: const Icon(Icons.delete, color: Colors.red),
                             onPressed: () {
                               setState(() {
-                                widget.cart.removeFromCart(product);
+                                _deleteProductFromCart(product); // Panggil fungsi hapus produk
                               });
                             },
                           ),
@@ -126,6 +136,13 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
+  // Fungsi untuk menghapus produk dari keranjang tanpa mengurangi kuantitas
+  void _deleteProductFromCart(Product product) {
+    widget.cart.items.remove(product); // Hapus produk langsung dari cart
+    setState(() {}); // Perbarui UI setelah menghapus
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${product.title} dihapus dari keranjang')));
+  }
+
   // Fungsi untuk mengurangi kuantitas
   void _decreaseQuantity(Product product) {
     if (product.quantity > 1) {
@@ -134,8 +151,7 @@ class _CartPageState extends State<CartPage> {
       });
     } else {
       // Jika kuantitas 1, hapus dari keranjang
-      widget.cart.removeFromCart(product);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${product.title} dihapus dari keranjang')));
+      _deleteProductFromCart(product);
     }
   }
 
@@ -154,7 +170,7 @@ class _CartPageState extends State<CartPage> {
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(15),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.blueGrey,
         ),
         onPressed: () {
           if (totalPrice > 0) {

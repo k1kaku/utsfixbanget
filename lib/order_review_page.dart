@@ -25,13 +25,13 @@ class OrderReviewPage extends StatefulWidget {
 
 class _OrderReviewPageState extends State<OrderReviewPage> {
   String _selectedPaymentMethod = 'Master Card';
-  String _shippingAddress = 'Grasya B Lampala, Grogol, Jakarta, Indonesia';
+  String _shippingAddress = 'Taimoor Sikander, +923329121290, Muhallah Usman a bad, Chakwal, Punjab 48800, Pakistan';
 
   final List<String> _paymentMethods = ['Master Card', 'BCA', 'BNI', 'SPAY', 'OVO', 'MANDIRI'];
   final List<String> _addresses = [
-    'Grasya B Lampala, Grogol, Jakarta, Indonesia',
-    'Andri Rizkika, Cengkareng, Jakarta, Indonesia',
-    'Hana Fathiyah, Buah Batu, Bandung, Indonesia'
+    'Taimoor Sikander, +923329121290, Muhallah Usman a bad, Chakwal, Punjab 48800, Pakistan',
+    '123 Main Street, Jakarta, Indonesia',
+    '456 Second Street, Bandung, Indonesia'
   ];
 
   @override
@@ -75,13 +75,37 @@ class _OrderReviewPageState extends State<OrderReviewPage> {
                   elevation: 4,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                   child: ListTile(
+                    contentPadding: const EdgeInsets.all(12.0), // Tambah padding agar lebih lebar
                     leading: Hero(
                       tag: product.title,
-                      child: Image.asset(product.imageUrl, width: 50, height: 50),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          product.imageUrl,
+                          width: 80,  // Perbesar ukuran gambar
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
-                    title: Text(product.title, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text('Qty: $quantity'),
-                    trailing: Text('Rp ${(product.price * quantity).toStringAsFixed(0)}'),
+                    title: Text(
+                      product.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20, // Perbesar ukuran teks produk
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Qty: $quantity',
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    trailing: Text(
+                      'Rp ${(product.price * quantity).toStringAsFixed(0)}',
+                      style: const TextStyle(
+                        fontSize: 18,  // Perbesar ukuran teks harga
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 );
               }),
@@ -114,26 +138,26 @@ class _OrderReviewPageState extends State<OrderReviewPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
-          title: const Text('Subtotal', style: TextStyle(fontWeight: FontWeight.bold)),
-          trailing: Text('Rp ${subtotal.toStringAsFixed(0)}'),
+          title: const Text('Subtotal', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          trailing: Text('Rp ${subtotal.toStringAsFixed(0)}', style: const TextStyle(fontSize: 18)),
         ),
         ListTile(
-          title: const Text('Shipping Fee', style: TextStyle(fontWeight: FontWeight.bold)),
-          trailing: Text('Rp ${shippingFee.toStringAsFixed(0)}'),
+          title: const Text('Shipping Fee', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          trailing: Text('Rp ${shippingFee.toStringAsFixed(0)}', style: const TextStyle(fontSize: 18)),
         ),
         ListTile(
-          title: const Text('Tax Fee', style: TextStyle(fontWeight: FontWeight.bold)),
-          trailing: Text('Rp ${tax.toStringAsFixed(0)}'),
+          title: const Text('Tax Fee', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          trailing: Text('Rp ${tax.toStringAsFixed(0)}', style: const TextStyle(fontSize: 18)),
         ),
         const Divider(),
         ListTile(
           title: const Text(
             'Total',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
           ),
           trailing: Text(
             'Rp ${total.toStringAsFixed(0)}',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
           ),
         ),
       ],
@@ -146,11 +170,11 @@ class _OrderReviewPageState extends State<OrderReviewPage> {
       children: [
         const Text(
           'Payment Method',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         ListTile(
           leading: const Icon(Icons.credit_card, color: Colors.blueAccent),
-          title: Text(_selectedPaymentMethod),
+          title: Text(_selectedPaymentMethod, style: const TextStyle(fontSize: 16)),
           trailing: TextButton(
             onPressed: () {
               _selectPaymentMethod(context);
@@ -168,11 +192,11 @@ class _OrderReviewPageState extends State<OrderReviewPage> {
       children: [
         const Text(
           'Shipping Address',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         ListTile(
           leading: const Icon(Icons.location_on, color: Colors.redAccent),
-          title: Text(_shippingAddress),
+          title: Text(_shippingAddress, style: const TextStyle(fontSize: 16)),
           trailing: TextButton(
             onPressed: () {
               _selectShippingAddress(context);
@@ -191,7 +215,7 @@ class _OrderReviewPageState extends State<OrderReviewPage> {
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           padding: const EdgeInsets.all(15),
-          backgroundColor: Colors.green, // Ganti 'primary' dengan 'backgroundColor'
+          backgroundColor: Colors.green,
         ),
         onPressed: () {
           Navigator.push(
@@ -200,14 +224,17 @@ class _OrderReviewPageState extends State<OrderReviewPage> {
               builder: (context) => PaymentSuccessPage(
                 cart: widget.cart,
                 shouldClearCart: widget.shouldClearCart,
-                isDirectPurchase: widget.isDirectPurchase,
               ),
             ),
           );
         },
         child: Text(
           'Checkout Rp ${total.toStringAsFixed(0)}',
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            fontSize: 20, // Perbesar ukuran teks tombol
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
       ),
     );

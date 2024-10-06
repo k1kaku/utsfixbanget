@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String selectedCategory = 'All'; // Filter untuk kategori
-  final List<Product> _wishlist = []; // Inisialisasi wishlist
+  List<Product> _wishlist = []; // Inisialisasi wishlist
 
   // Dummy data produk dengan gambar dari assets
   final List<Product> allProducts = [
@@ -134,7 +134,15 @@ class _HomePageState extends State<HomePage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => WishlistPage(wishlist: _wishlist),
+                  builder: (context) => WishlistPage(
+                    wishlist: _wishlist,
+                    cart: widget.cart,
+                    updateWishlist: (updatedWishlist) {
+                      setState(() {
+                        _wishlist = updatedWishlist; // Update wishlist di HomePage
+                      });
+                    },
+                  ),
                 ),
               );
             },
@@ -335,5 +343,4 @@ class _HomePageState extends State<HomePage> {
       }).toList(),
     );
   }
-
 }
