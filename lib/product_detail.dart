@@ -3,19 +3,11 @@ import 'order_review_page.dart';
 import 'models/product.dart';
 import 'cart.dart'; // Tambahkan import Cart
 
-class ProductDetail extends StatefulWidget {
+class ProductDetail extends StatelessWidget {
   final Product product;
   final Cart cart;
 
   const ProductDetail({Key? key, required this.product, required this.cart}) : super(key: key);
-
-  @override
-  _ProductDetailState createState() => _ProductDetailState();
-}
-
-class _ProductDetailState extends State<ProductDetail> {
-  bool isInWishlist = false; // Status wishlist
-  bool isInCart = false; // Status keranjang
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +34,13 @@ class _ProductDetailState extends State<ProductDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Gambar Produk dengan Efek Rounded
+            // Gambar Produk
             Center(
               child: Hero(
-                tag: widget.product.title,
+                tag: product.title,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(15),
-                  child: Image.asset(widget.product.imageUrl, height: 220, fit: BoxFit.cover),
+                  child: Image.asset(product.imageUrl, height: 220, fit: BoxFit.cover),
                 ),
               ),
             ),
@@ -56,7 +48,7 @@ class _ProductDetailState extends State<ProductDetail> {
 
             // Nama dan Harga Produk
             Text(
-              widget.product.title,
+              product.title,
               style: const TextStyle(
                 fontSize: 26,
                 fontWeight: FontWeight.bold,
@@ -66,7 +58,7 @@ class _ProductDetailState extends State<ProductDetail> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Rp ${widget.product.price}',
+              'Rp ${product.price}',
               style: const TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.w600,
@@ -75,7 +67,7 @@ class _ProductDetailState extends State<ProductDetail> {
             ),
             const SizedBox(height: 8),
 
-            // Bintang Rating Produk dengan warna hitam
+            // Bintang Rating Produk
             _buildRatingStars(4.5),
             const SizedBox(height: 8),
 
@@ -84,18 +76,11 @@ class _ProductDetailState extends State<ProductDetail> {
             const SizedBox(height: 8),
 
             // Deskripsi Produk
-            _buildProductDescription(widget.product.description),
+            _buildProductDescription(product.description),
             const Spacer(),
 
-            // Tombol Wishlist, Cart, dan Beli
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildWishlistButton(),
-                _buildCartButton(),
-                _buildPurchaseButton(context),
-              ],
-            ),
+            // Tombol Beli
+            _buildPurchaseButton(context),
             const SizedBox(height: 16),
           ],
         ),
@@ -105,7 +90,8 @@ class _ProductDetailState extends State<ProductDetail> {
 
   // Tombol "Beli Sekarang"
   Widget _buildPurchaseButton(BuildContext context) {
-    return Expanded(
+    return SizedBox(
+      width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
@@ -117,11 +103,11 @@ class _ProductDetailState extends State<ProductDetail> {
             context,
             MaterialPageRoute(
               builder: (context) => OrderReviewPage(
-                products: [widget.product], // Produk dikirim sebagai list
-                quantities: [1], // Kuantitas dalam bentuk list
-                cart: widget.cart, // Kirimkan instance Cart ke OrderReviewPage
-                shouldClearCart: false, // Jangan bersihkan keranjang setelah pembayaran
-                isDirectPurchase: true, // Tampilkan sebagai pembelian langsung, tanpa masuk ke keranjang
+                products: [product],
+                quantities: [1],
+                cart: cart,
+                shouldClearCart: false,
+                isDirectPurchase: true,
               ),
             ),
           );
@@ -131,46 +117,6 @@ class _ProductDetailState extends State<ProductDetail> {
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
-    );
-  }
-
-  // Tombol Wishlist (hanya ikon)
-  Widget _buildWishlistButton() {
-    return IconButton(
-      icon: Icon(isInWishlist ? Icons.favorite : Icons.favorite_border, color: isInWishlist ? Colors.red : Colors.black),
-      onPressed: () {
-        setState(() {
-          isInWishlist = !isInWishlist; // Ubah status wishlist
-          if (isInWishlist) {
-            // Tambah ke wishlist
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${widget.product.title} ditambahkan ke Wishlist')));
-          } else {
-            // Hapus dari wishlist
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${widget.product.title} dihapus dari Wishlist')));
-          }
-        });
-      },
-    );
-  }
-
-  // Tombol Cart (hanya ikon)
-  Widget _buildCartButton() {
-    return IconButton(
-      icon: Icon(isInCart ? Icons.shopping_cart : Icons.shopping_cart_outlined, color: isInCart ? Colors.blue : Colors.black),
-      onPressed: () {
-        setState(() {
-          isInCart = !isInCart; // Ubah status keranjang
-          if (isInCart) {
-            // Tambah ke keranjang
-            widget.cart.addToCart(widget.product);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${widget.product.title} ditambahkan ke Keranjang')));
-          } else {
-            // Hapus dari keranjang
-            widget.cart.removeFromCart(widget.product);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${widget.product.title} dihapus dari Keranjang')));
-          }
-        });
-      },
     );
   }
 
