@@ -111,7 +111,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Toko Merchandise Kpop',
+          'VibeMerch',
           style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.white,
